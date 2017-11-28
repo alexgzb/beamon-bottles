@@ -1,7 +1,7 @@
 import kotlin.collections.ArrayList
 
 val emptyBottle = "Empty %dL bottle"
-val pourFromBottleXtoBottleY = "Pour from %dL bottle to %dL bottle"
+val pourFromBottleAtoBottleB = "Pour from %dL bottle to %dL bottle"
 val fillBottle = "Fill %dL bottle"
 
 class Solution(val steps: ArrayList<String>, val values: MutableList<Pair<Int, Int>>)
@@ -10,7 +10,6 @@ class Solution(val steps: ArrayList<String>, val values: MutableList<Pair<Int, I
 fun main(args: Array<String>) {
     calculateBestSolutionAndPrint(4, 3, 5)
     calculateBestSolutionAndPrint(1, 3, 5)
-    calculateBestSolutionAndPrint(4, 3, 6)
 }
 
 fun calculateBestSolutionAndPrint(goal: Int, bottleASize: Int, bottleBSize: Int) {
@@ -43,20 +42,20 @@ fun calculateSteps(goal: Int, bottleASize: Int, bottleBSize: Int): Solution {
     var bottleA = bottleASize
     var bottleB = 0
     values.add(Pair(bottleA, bottleB))
-    val step = fillBottle.format(bottleASize)
+    var step = fillBottle.format(bottleASize)
     steps.add("${(steps.size + 1)}. $step")
 
-    while (bottleA != goal && bottleBSize != goal) {
+    while (bottleA != goal && bottleB != goal) {
         //Pour from bottleA to bottleB
         val pouringAmount = minOf(bottleA, (bottleBSize - bottleB))
         bottleA -= pouringAmount
         bottleB += pouringAmount
         values.add(Pair(bottleA, bottleB))
-        val step = pourFromBottleXtoBottleY.format(bottleASize, bottleBSize)
+        step = pourFromBottleAtoBottleB.format(bottleASize, bottleBSize)
         steps.add("${(steps.size + 1)}. $step")
 
-        // Reached target value
-        if (bottleA == goal || bottleB == goal || steps.size > 10000) {
+        // Reached target value or ridiculously large amount of steps
+        if (bottleA == goal || bottleB == goal || steps.size > 100000) {
             break
         }
 
@@ -64,7 +63,7 @@ fun calculateSteps(goal: Int, bottleASize: Int, bottleBSize: Int): Solution {
         if (bottleA == 0) {
             bottleA = bottleASize
             values.add(Pair(bottleA, bottleB))
-            val step = (fillBottle.format(bottleASize))
+            step = (fillBottle.format(bottleASize))
             steps.add("${(steps.size + 1)}. $step")
         }
 
@@ -72,8 +71,8 @@ fun calculateSteps(goal: Int, bottleASize: Int, bottleBSize: Int): Solution {
         if (bottleB == bottleBSize) {
             bottleB = 0
             values.add(Pair(bottleA, bottleB))
-            val step = (emptyBottle.format(bottleBSize))
-            steps.add("${(steps.size + 1)} $step")
+            step = (emptyBottle.format(bottleBSize))
+            steps.add("${(steps.size + 1)}. $step")
         }
     }
 
